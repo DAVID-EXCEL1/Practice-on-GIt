@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💖 Love Calculator 💖</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Tailwind default font */
+        }
+
+        /* Custom styles for a bit more flair */
+        .heartbeat {
+            animation: heartbeat 1.5s ease-in-out infinite both;
+        }
+
+        @keyframes heartbeat {
+            from {
+                transform: scale(1);
+                transform-origin: center center;
+                animation-timing-function: ease-out;
+            }
+
+            10% {
+                transform: scale(0.91);
+                animation-timing-function: ease-in;
+            }
+
+            17% {
+                transform: scale(0.98);
+                animation-timing-function: ease-out;
+            }
+
+            33% {
+                transform: scale(0.87);
+                animation-timing-function: ease-in;
+            }
+
+            45% {
+                transform: scale(1);
+                animation-timing-function: ease-out;
+            }
+        }
+
+        .gradient-text {
+            background-image: linear-gradient(to right, #ec4899, #f87171, #fbbf24);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gradient-to-br from-pink-200 via-red-200 to-yellow-200 min-h-screen flex flex-col items-center justify-center p-4 selection:bg-pink-300 selection:text-pink-900">
+
+    <div class="bg-white shadow-2xl rounded-xl p-6 md:p-10 w-full max-w-md text-center">
+        <h1 class="text-4xl md:text-5xl font-bold mb-2">
+            <span class="gradient-text">Love</span> <span class="text-gray-700">Calculator</span>
+            <span class="text-3xl heartbeat inline-block">💖</span>
+        </h1>
+        <p class="text-gray-600 mb-8 text-sm md:text-base">Find out your love compatibility!</p>
+
+        <div class="space-y-6 mb-8">
+            <div>
+                <label for="name1" class="block text-sm font-semibold text-gray-700 mb-1 text-left">Your Name:</label>
+                <input type="text" id="name1" name="name1" placeholder="E.g., Alex"
+                    class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 sm:text-sm transition duration-150 ease-in-out">
+            </div>
+            <div>
+                <label for="name2" class="block text-sm font-semibold text-gray-700 mb-1 text-left">Crush's Name:</label>
+                <input type="text" id="name2" name="name2" placeholder="E.g., Jamie"
+                    class="mt-1 block w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 sm:text-sm transition duration-150 ease-in-out">
+            </div>
+        </div>
+
+        <button id="calculateButton"
+            class="w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-75 transition duration-150 ease-in-out transform hover:scale-105">
+            Calculate Love ✨
+        </button>
+
+        <div id="resultArea"
+            class="mt-8 p-6 bg-pink-50 rounded-lg min-h-[100px] flex items-center justify-center hidden">
+            <p id="resultText" class="text-lg md:text-xl text-gray-700"></p>
+        </div>
+
+        <div id="messageBox"
+            class="fixed top-5 right-5 bg-red-500 text-white p-4 rounded-lg shadow-lg hidden animate-pulse">
+            <span id="messageText"></span>
+            <button onclick="closeMessageBox()" class="ml-4 font-bold">X</button>
+        </div>
+
+    </div>
+
+    <footer class="mt-12 text-center text-sm text-pink-700/80">
+        <p>&copy; 2024 Fun Projects Inc. For entertainment purposes only.</p>
+    </footer>
+
+    <script>
+        // Get references to DOM elements
+        const name1Input = document.getElementById('name1');
+        const name2Input = document.getElementById('name2');
+        const calculateButton = document.getElementById('calculateButton');
+        const resultArea = document.getElementById('resultArea');
+        const resultText = document.getElementById('resultText');
+        const messageBox = document.getElementById('messageBox');
+        const messageText = document.getElementById('messageText');
+
+        // Function to display a custom message
+        function showMessage(message, isError = true) {
+            messageText.textContent = message;
+            messageBox.classList.remove('hidden', 'bg-red-500', 'bg-green-500');
+            if (isError) {
+                messageBox.classList.add('bg-red-500');
+            } else {
+                messageBox.classList.add('bg-green-500'); // For success messages if needed
+            }
+            messageBox.classList.remove('animate-pulse'); // remove if already there
+            void messageBox.offsetWidth; // trigger reflow
+            messageBox.classList.add('animate-pulse');
+
+
+            // Hide the message box after a few seconds
+            setTimeout(() => {
+                closeMessageBox();
+            }, 4000);
+        }
+
+        // Function to close the message box
+        function closeMessageBox() {
+            messageBox.classList.add('hidden');
+        }
+
+        // Event listener for the calculate button
+        calculateButton.addEventListener('click', () => {
+            const name1 = name1Input.value.trim();
+            const name2 = name2Input.value.trim();
+
+            // --- Input Validation ---
+            if (name1 === "" || name2 === "") {
+                showMessage("Oops! Please enter both names.");
+                resultArea.classList.add('hidden'); // Hide result area if previously shown
+                return; // Stop further execution
+            }
+
+            // --- Love Calculation Logic ---
+            // This is the core part using Math.random()
+            // Math.random() gives a number between 0 (inclusive) and 1 (exclusive)
+            // Multiply by 100 to get a number between 0 and 99.99...
+            // Math.floor() rounds down to the nearest whole number (0 to 99)
+            // Add 1 to make the range 1 to 100
+            const lovePercentage = Math.floor(Math.random() * 100) + 1;
+
+            // --- Determine a fun message based on the percentage ---
+            let message = "";
+            let emoji = "";
+
+            if (lovePercentage > 90) {
+                message = "Wow! A match made in heaven! You two are inseparable!";
+                emoji = "💖🎉😍";
+            } else if (lovePercentage > 75) {
+                message = "Incredible connection! There's a very strong bond here.";
+                emoji = "💞✨😊";
+            } else if (lovePercentage > 50) {
+                message = "Looking good! There's definite potential for something special.";
+                emoji = "❤️😊👍";
+            } else if (lovePercentage > 25) {
+                message = "Hmm, maybe good friends? Every great love starts somewhere!";
+                emoji = "🤔🤝😉";
+            } else {
+                message = "Not the highest score, but hey, opposites attract, right? Or maybe it's just for fun!";
+                emoji = "😅🤷‍♂️💔";
+            }
+
+            // --- Display the Result ---
+            resultText.innerHTML = `
+                <span class="block text-2xl md:text-3xl font-bold gradient-text">${lovePercentage}%</span>
+                <span class="block mt-2">${name1} & ${name2}</span>
+                <span class="block mt-2 text-sm md:text-base">${message} ${emoji}</span>
+            `;
+            resultArea.classList.remove('hidden');
+            resultArea.classList.add('animate-pulse'); // Add a little animation
+            setTimeout(() => resultArea.classList.remove('animate-pulse'), 1000); // Remove animation after a bit
+        });
+
+        // Optional: Allow pressing Enter in input fields to trigger calculation
+        [name1Input, name2Input].forEach(input => {
+            input.addEventListener('keypress', function (event) {
+                if (event.key === 'Enter') {
+                    calculateButton.click(); // Simulate a click on the button
+                }
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
